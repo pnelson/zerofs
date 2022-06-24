@@ -18,26 +18,26 @@ func New() fs.FS {
 
 // Open implements the io/fs.FS interface.
 func (f zeroFS) Open(name string) (fs.File, error) {
-	if name != dot {
-		return nil, newErrNotFound(name)
+	if name == dot {
+		return &openDir{}, nil
 	}
-	return &openDir{}, nil
+	return nil, newErrNotFound(name)
 }
 
 // ReadDir implements the io/fs.ReadDirFS interface.
 func (f zeroFS) ReadDir(name string) ([]fs.DirEntry, error) {
-	if name != dot {
-		return nil, newErrNotFound(name)
+	if name == dot {
+		return make([]fs.DirEntry, 0), nil
 	}
-	return make([]fs.DirEntry, 0), nil
+	return nil, newErrNotFound(name)
 }
 
 // ReadFile implements the io/fs.ReadFileFS interface.
 func (f zeroFS) ReadFile(name string) ([]byte, error) {
-	if name != dot {
-		return nil, newErrNotFound(name)
+	if name == dot {
+		return nil, newErrIsDir(name)
 	}
-	return nil, newErrIsDir(name)
+	return nil, newErrNotFound(name)
 }
 
 type openDir struct{}
