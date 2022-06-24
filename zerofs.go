@@ -59,7 +59,12 @@ func (d *openDir) Sys() any           { return nil }
 //
 // The io/fs.FS documentation states that every
 // directory should implement this interface.
-func (d *openDir) ReadDir(count int) ([]fs.DirEntry, error) { return nil, io.EOF }
+func (d *openDir) ReadDir(count int) ([]fs.DirEntry, error) {
+	if count <= 0 {
+		return make([]fs.DirEntry, 0), nil
+	}
+	return nil, io.EOF
+}
 
 func newErrIsDir(name string) error {
 	return &fs.PathError{Op: "read", Path: name, Err: fs.ErrInvalid}
